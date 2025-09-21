@@ -1,0 +1,17 @@
+<odoo>
+    <template id="snippets" inherit_id="website.snippets" name="Custom - Snippets">
+        <!-- Tạo group mới -->
+        <xpath expr="//snippets[@id='snippet_groups']/*[1]" position="before">
+            <t snippet-group="custom" t-snippet="website.s_snippet_group" string="Custom Snippets" t-thumbnail="/website_custom_snippet/static/src/snippets/s_custom_snippet/thumbnail.svg"/>
+        </xpath>
+        <!-- Thêm snippet vào group -->
+        <xpath expr="//snippets[@id='snippet_structure']/*[1]" position="before">
+            <t t-snippet="website_custom_snippet.s_custom_snippet" string="Custom Snippet" group="custom">
+                <keywords>Custom,Snippet</keywords>
+            </t>
+            <t t-snippet="website_custom_snippet.loan_list_template" string="Danh sách khoản vay" group="custom">
+                <keywords>Loan,Vay,Khoản vay</keywords>
+            </t>
+        </xpath>
+    </template>
+</odoo>

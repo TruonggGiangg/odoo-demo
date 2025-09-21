@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="p2p_dashboard.GraphRenderer" owl="1">
+        <div class="o_field_dashboard_stats">
+            <div class="p2p-stats-container" t-att-style="state.containerStyle">
+                <h4 t-if="state.title" class="p2p-stats-title" t-esc="state.title"/>
+
+                <!-- Loading state -->
+                <div t-if="state.isLoading" class="p2p-stats-loading text-center p-4">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <p class="mt-2">Đang tải dữ liệu...</p>
+                </div>
+
+                <!-- Error state -->
+                <div t-elif="state.hasError" class="p2p-stats-error text-center p-4 text-danger">
+                    <i class="fa fa-exclamation-triangle fa-2x"/>
+                    <p class="mt-2">Có lỗi xảy ra: <span t-esc="state.errorMessage or 'Không thể hiển thị dữ liệu'"/></p>
+                </div>
+
+                <!-- Empty data state -->
+                <div t-elif="not state.chartData or not state.chartData.labels or state.chartData.labels.length === 0" class="p2p-stats-empty text-center p-4 text-muted">
+                    <i class="fa fa-info-circle fa-2x"/>
+                    <p class="mt-2"><t t-esc="props.name or 'Biểu đồ'"/><br/>Không có dữ liệu thống kê</p>
+                </div>
+
+                <!-- Data display -->
+                <table t-else="" class="table table-bordered table-hover p2p-stats-table w-100 mb-3">
+                    <thead>
+                        <tr>
+                            <th class="text-center" t-esc="state.headerLabel"/>
+                            <th t-foreach="state.chartData.datasets" t-as="dataset" t-key="dataset_index" class="text-center" t-esc="dataset.label or 'Giá trị'"/>
+                            <th t-if="state.showPercentage" class="text-center">Phần trăm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="state.chartData.labels" t-as="label" t-key="label_index" t-att-class="label_index % 2 === 1 ? 'bg-light' : ''">
+                            <td t-esc="label"/>
+                            <td t-foreach="state.chartData.datasets" t-as="dataset" t-key="dataset_index" class="text-right" t-esc="formatValue(dataset.data[label_index], dataset.label)"/>
+                            <td t-if="state.showPercentage" class="text-right" t-esc="formatPercent(getPercentage(label_index))"/>
+                        </tr>
+                    </tbody>
+                    <tfoot t-if="state.showTotal and state.chartData.labels.length &gt; 0">
+                        <tr class="font-weight-bold bg-light">
+                            <td>Tổng cộng</td>
+                            <td t-foreach="state.chartData.datasets" t-as="dataset" t-key="dataset_index" class="text-right" t-esc="formatValue(calculateTotal(dataset_index), dataset.label)"/>
+                            <td t-if="state.showPercentage" class="text-right">100%</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Component debug info in development mode -->
+                <div t-if="env.debug" class="p2p-stats-debug small text-muted mt-3 p-2 border-top">
+                    <div><strong>Field:</strong> <t t-esc="props.name"/></div>
+                    <div><strong>Type:</strong> <t t-esc="state.chartType"/></div>
+                    <div><strong>Records:</strong> <t t-esc="state.chartData ? state.chartData.labels.length : 0"/></div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

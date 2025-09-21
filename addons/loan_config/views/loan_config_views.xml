@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_loan_config_list" model="ir.ui.view">
+        <field name="name">loan.config.list</field>
+        <field name="model">loan.config</field>
+        <field name="priority" eval="9999"/>
+        <field name="arch" type="xml">
+            <list string="Cấu hình khoản vay" create="true" edit="true">
+                <field name="name"/>
+                <field name="is_active" widget="boolean_toggle"/>
+                <field name="base_interest_rate"/>
+                <field name="service_fee_rate"/>
+                <field name="risk_factor"/>
+                <field name="credit_score_factor"/>
+                <field name="server_enabled" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Force Override Default View -->
+    <record id="view_loan_config_list_force" model="ir.ui.view">
+        <field name="name">loan.config.list.force</field>
+        <field name="model">loan.config</field>
+        <field name="priority" eval="99999"/>
+        <field name="arch" type="xml">
+            <list string="Cấu hình khoản vay" create="true" edit="true">
+                <field name="name"/>
+                <field name="is_active" widget="boolean_toggle"/>
+                <field name="base_interest_rate"/>
+                <field name="service_fee_rate"/>
+                <field name="risk_factor"/>
+                <field name="credit_score_factor"/>
+                <field name="server_enabled" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_loan_config_form" model="ir.ui.view">
+        <field name="name">loan.config.form</field>
+        <field name="model">loan.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="test_server_connection" string="Test Server" type="object" class="oe_highlight" invisible="not server_enabled"/>
+                    <button name="sync_config_to_server" string="Đồng bộ Server" type="object" invisible="not server_enabled"/>
+                    <field name="is_active" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Tên cấu hình"/>
+                        </h1>
+                    </div>
+                    
+                    <notebook>
+                        <page string="Thông tin chung" name="general">
+                            <group>
+                                <group string="Cấu hình cơ bản">
+                                    <field name="default_currency_id"/>
+                                    <field name="factor_constant"/>
+                                </group>
+                                <group string="Giới hạn khoản vay">
+                                    <field name="min_loan_amount"/>
+                                    <field name="max_loan_amount"/>
+                                    <field name="auto_approval_limit"/>
+                                    <field name="max_concurrent_loans"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Lãi suất và phí" name="rates">
+                            <group>
+                                <group string="Lãi suất">
+                                    <field name="base_interest_rate"/>
+                                    <field name="max_interest_rate"/>
+                                </group>
+                                <group string="Phí dịch vụ">
+                                    <field name="service_fee_rate"/>
+                                    <field name="late_fee_rate"/>
+                                    <field name="processing_fee"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Hệ số cấu hình" name="factors">
+                            <group>
+                                <group string="Hệ số rủi ro">
+                                    <field name="risk_factor"/>
+                                    <field name="credit_score_factor"/>
+                                    <field name="loan_term_factor"/>
+                                </group>
+                                <group string="Hệ số khuyến khích">
+                                    <field name="collateral_factor"/>
+                                    <field name="early_repayment_discount"/>
+                                    <field name="late_payment_penalty"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                <strong>Hướng dẫn sử dụng hệ số:</strong><br/>
+                                • <strong>Hệ số rủi ro:</strong> Tăng lãi suất cho khách hàng có rủi ro cao<br/>
+                                • <strong>Hệ số điểm tín dụng:</strong> Giảm lãi suất cho khách hàng có điểm tín dụng tốt<br/>
+                                • <strong>Hệ số kỳ hạn:</strong> Tăng lãi suất theo thời gian vay<br/>
+                                • <strong>Hệ số tài sản đảm bảo:</strong> Giảm lãi suất khi có tài sản đảm bảo<br/>
+                                • <strong>Giảm giá trả sớm:</strong> Khuyến khích trả sớm<br/>
+                                • <strong>Phạt trả chậm:</strong> Răn đe trả chậm
+                            </div>
+                        </page>
+                        
+                        <page string="Tích hợp Server" name="server">
+                            <group>
+                                <group string="Cấu hình Server">
+                                    <field name="server_enabled"/>
+                                    <field name="server_api_url" invisible="not server_enabled"/>
+                                    <field name="server_api_key" password="True" invisible="not server_enabled"/>
+                                    <field name="server_sync_interval" invisible="not server_enabled"/>
+                                </group>
+                                <group string="Trạng thái kết nối" invisible="not server_enabled">
+                                    <field name="server_enabled" readonly="1"/>
+                                    <field name="server_api_url" readonly="1"/>
+                                    <field name="server_sync_interval" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-warning" role="alert" invisible="not server_enabled">
+                                <strong>Lưu ý:</strong> Đảm bảo server đang chạy và có thể kết nối được trước khi test.
+                            </div>
+                        </page>
+                        
+
+                        
+                        <page string="Thông báo" name="notifications">
+                            <group>
+                                <group string="Cấu hình thông báo">
+                                    <field name="email_notifications"/>
+                                    <field name="sms_notifications"/>
+                                </group>
+                                <group string="Trạng thái thông báo">
+                                    <field name="email_notifications" readonly="1"/>
+                                    <field name="sms_notifications" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div> -->
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_loan_config_search" model="ir.ui.view">
+        <field name="name">loan.config.search</field>
+        <field name="model">loan.config</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter string="Hoạt động" name="active" domain="[('is_active', '=', True)]"/>
+                <filter string="Không hoạt động" name="inactive" domain="[('is_active', '=', False)]"/>
+                <separator/>
+                <filter string="Có tích hợp Server" name="server_enabled" domain="[('server_enabled', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Trạng thái" name="group_active" context="{'group_by': 'is_active'}"/>
+                    <filter string="Server" name="group_server" context="{'group_by': 'server_enabled'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_loan_config" model="ir.actions.act_window">
+        <field name="name">Cấu hình khoản vay</field>
+        <field name="res_model">loan.config</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_loan_config_list_force"/>
+        <field name="context">{'default_view_mode': 'list'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Tạo cấu hình khoản vay đầu tiên
+            </p>
+            <p>
+                Cấu hình các thông số cho hệ thống P2P Lending bao gồm lãi suất, phí, hệ số rủi ro và tích hợp với server.
+            </p>
+        </field>
+    </record>
+</odoo>

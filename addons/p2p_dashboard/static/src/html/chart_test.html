@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .json-input {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chart.js Test</h1>
+    
+    <div>
+        <button onclick="createBarChart()">Create Bar Chart</button>
+        <button onclick="createPieChart()">Create Pie Chart</button>
+        <button onclick="createLineChart()">Create Line Chart</button>
+        <button onclick="destroyCharts()">Destroy Charts</button>
+    </div>
+    
+    <h2>Test with JSON Data</h2>
+    <textarea id="jsonInput" class="json-input" placeholder="Paste your JSON data here..."></textarea>
+    <button onclick="createChartFromJson()">Create Chart from JSON</button>
+    
+    <div id="chartType">
+        <label>
+            <input type="radio" name="chartType" value="bar" checked> Bar
+        </label>
+        <label>
+            <input type="radio" name="chartType" value="pie"> Pie
+        </label>
+        <label>
+            <input type="radio" name="chartType" value="line"> Line
+        </label>
+    </div>
+    
+    <div class="chart-container">
+        <canvas id="testChart"></canvas>
+    </div>
+    
+    <div class="chart-container">
+        <canvas id="jsonChart"></canvas>
+    </div>
+    
+    <script>
+        let testChart = null;
+        let jsonChart = null;
+        
+        function createBarChart() {
+            destroyChart(testChart);
+            
+            const ctx = document.getElementById('testChart').getContext('2d');
+            testChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: [12, 19, 3, 5, 2, 3],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 206, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(153, 102, 255)',
+                            'rgb(255, 159, 64)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createPieChart() {
+            destroyChart(testChart);
+            
+            const ctx = document.getElementById('testChart').getContext('2d');
+            testChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: [12, 19, 3, 5, 2, 3],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 206, 86)',
+                            'rgb(75, 192, 192)',
+                            'rgb(153, 102, 255)',
+                            'rgb(255, 159, 64)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
+        function createLineChart() {
+            destroyChart(testChart);
+            
+            const ctx = document.getElementById('testChart').getContext('2d');
+            testChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+                    datasets: [{
+                        label: 'Sample Data',
+                        data: [65, 59, 80, 81, 56, 55],
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createChartFromJson() {
+            destroyChart(jsonChart);
+            
+            const jsonInput = document.getElementById('jsonInput').value.trim();
+            if (!jsonInput) {
+                alert('Please enter JSON data');
+                return;
+            }
+            
+            let chartData;
+            try {
+                chartData = JSON.parse(jsonInput);
+            } catch (e) {
+                alert('Invalid JSON: ' + e.message);
+                return;
+            }
+            
+            // Get selected chart type
+            const chartType = document.querySelector('input[name="chartType"]:checked').value;
+            
+            const ctx = document.getElementById('jsonChart').getContext('2d');
+            jsonChart = new Chart(ctx, {
+                type: chartType,
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Log the chart object to console for debugging
+            console.log('Chart created with data:', chartData);
+        }
+        
+        function destroyChart(chart) {
+            if (chart) {
+                chart.destroy();
+            }
+        }
+        
+        function destroyCharts() {
+            destroyChart(testChart);
+            destroyChart(jsonChart);
+            testChart = null;
+            jsonChart = null;
+        }
+        
+        // Create initial chart
+        createBarChart();
+    </script>
+</body>
+</html>

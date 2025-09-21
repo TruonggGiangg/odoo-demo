@@ -1,0 +1,25 @@
+<odoo>
+    <template id="s_custom_snippet" name="My Custom Snippet">
+        <section class="s_custom_snippet" data-name="My Custom Snippet" data-snippet="s_custom_snippet">
+            <t t-call="website_custom_snippet.loan_list_template"/>
+        </section>
+    </template>
+
+    <!-- Options template (kế thừa website.snippet_options) -->
+    <template id="s_custom_snippet_options" inherit_id="website.snippet_options" name="My Custom Snippet Options">
+        <xpath expr="." position="inside">
+            <div data-selector=".s_custom_snippet" data-js="customSnippetOptions">
+                <we-select string="Layout">
+                    <we-button data-select-class="">Default</we-button>
+                    <we-button data-select-class="s_custom_snippet_alt">Alternative</we-button>
+                </we-select>
+                <we-title>Spacing</we-title>
+                <we-button-group string="Padding Top">
+                    <we-button data-select-class="pt-0">0</we-button>
+                    <we-button data-select-class="pt-3">3</we-button>
+                    <we-button data-select-class="pt-5">5</we-button>
+                </we-button-group>
+            </div>
+        </xpath>
+    </template>
+</odoo>

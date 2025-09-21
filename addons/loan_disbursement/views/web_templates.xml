@@ -1,0 +1,311 @@
+<!-- odoo-18-docker-compose/addons/loan_disbursement/views/web_templates.xml -->
+<odoo>
+    <template id="dashboard_template" name="Loan Disbursement Dashboard">
+        <t t-call="web.layout">
+            <t t-call-assets="web.assets_frontend" t-js="false"/>
+            <t t-call-assets="web.assets_frontend" t-css="false"/>
+            <!-- Minimal CSS for DataTables (loaded inline to avoid asset bundling changes) -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-dt@1.13.8/css/jquery.dataTables.min.css"/>
+            <t t-set="title">Quản lý giải ngân khoản vay</t>
+            
+            <div class="container-fluid">
+                <!-- Header -->
+                <div class="row mb-3 align-items-end">
+                    <div class="col-md-6">
+                        <h1 class="mb-3">Quản lý giải ngân khoản vay</h1>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="button" class="btn btn-primary" id="sync-btn">Cập nhật</button>
+                            <button type="button" class="btn btn-success" id="batch-disburse-btn" disabled="disabled">Giải ngân hàng loạt</button>
+                            <button type="button" class="btn btn-outline-danger" id="batch-cancel-btn" disabled="disabled">Hủy bỏ hàng loạt</button>
+                        </div>
+                        <small class="text-muted d-block mt-2">Đã chọn: <span id="selected-count">0</span></small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="status-filter" class="form-label mb-1">Lọc theo trạng thái</label>
+                        <select id="status-filter" class="form-select">
+                            <option value="">Tất cả</option>
+                            <option value="draft">Nháp</option>
+                            <option value="pending">Chờ phê duyệt</option>
+                            <option value="approved">Đã phê duyệt</option>
+                            <option value="processing">Đang xử lý</option>
+                            <option value="disbursed">Đã giải ngân</option>
+                            <option value="rejected">Từ chối</option>
+                            <option value="cancelled">Đã hủy</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Statistics -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Tổng khoản vay</h5>
+                                <h2><t t-esc="(stats and stats['total_loans']) or 0"/></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Chờ giải ngân</h5>
+                                <h2><t t-esc="(stats and stats.get('pending_disbursements')) or 0"/></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Đã giải ngân</h5>
+                                <h2><t t-esc="(stats and stats.get('disbursed_count')) or 0"/></h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Tổng tiền</h5>
+                                <h2><t t-esc="'{:,.0f}'.format(((stats and stats.get('total_amount')) or 0))"/>đ</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loan List -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Danh sách khoản vay</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="loans-table">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <input type="checkbox" id="select-all"/>
+                                                </th>
+                                                <th>Mã loan</th>
+                                                <th>Người vay</th>
+                                                <th>Số tiền</th>
+                                                <th>Trạng thái</th>
+                                                <th>Ngày tạo</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="disbursements" t-as="disbursement">
+                                                <tr>
+                                                    <td>
+                                                        <input type="checkbox" class="loan-checkbox" 
+                                                               t-att-data-loan-id="disbursement.server_loan_id"/>
+                                                    </td>
+                                                    <td><t t-esc="disbursement.server_loan_id"/></td>
+                                                    <td><t t-esc="disbursement.borrower_id.name"/></td>
+                                                    <td><t t-esc="'{:,.0f}'.format(disbursement.amount)"/>đ</td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{disbursement.status == 'pending' and 'warning' or disbursement.status == 'approved' and 'info' or disbursement.status == 'processing' and 'primary' or disbursement.status == 'disbursed' and 'success' or disbursement.status == 'rejected' and 'danger' or disbursement.status == 'cancelled' and 'dark' or 'secondary'}">
+                                                            <t t-esc="disbursement.status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td><t t-esc="disbursement.create_date"/></td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-success disburse-btn"
+                                                                t-att-data-loan-id="disbursement.server_loan_id">
+                                                            Giải ngân
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-danger cancel-btn"
+                                                                t-att-data-loan-id="disbursement.server_loan_id">
+                                                            Hủy bỏ
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- JavaScript -->
+            <!-- SweetAlert2 (modern dialogs & toasts) - no icons configured -->
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <!-- DataTables core -->
+            <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.8/js/jquery.dataTables.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    // Initialize DataTable with Vietnamese-friendly labels
+                    var table = $('#loans-table').DataTable({
+                        paging: true,
+                        searching: true,
+                        info: true,
+                        order: [],
+                        language: {
+                            search: 'Tìm kiếm:',
+                            lengthMenu: 'Hiển thị _MENU_ dòng',
+                            info: 'Hiển thị _START_–_END_ trên _TOTAL_',
+                            infoEmpty: 'Không có dữ liệu',
+                            zeroRecords: 'Không tìm thấy dữ liệu phù hợp',
+                            paginate: { previous: 'Trước', next: 'Sau' }
+                        }
+                    });
+
+                    function updateSelectedCount() {
+                        var count = $('.loan-checkbox:checked').length;
+                        $('#selected-count').text(count);
+                        $('#batch-disburse-btn').prop('disabled', count === 0);
+                        $('#batch-cancel-btn').prop('disabled', count === 0);
+                    }
+
+                    function applyStatusFilter() {
+                        var value = ($('#status-filter').val() || '').toLowerCase();
+                        var regex = value ? '^' + value + '$' : '';
+                        // Status is in 5th column (index 4)
+                        table.column(4).search(regex, true, false).draw();
+                    }
+
+                    // Sync button
+                    $('#sync-btn').click(function() {
+                        var $btn = $(this);
+                        var oldText = $btn.text();
+                        $btn.prop('disabled', true).text('Đang cập nhật...');
+                        
+                        $.post('/loan-disbursement/sync', {}, null, 'json')
+                        .done(function(response) {
+                            if (response.success) {
+                                Swal.fire({toast: true, position: 'top-end', timer: 2000, showConfirmButton: false, title: 'Đồng bộ thành công' });
+                                location.reload();
+                            } else {
+                                Swal.fire({title: 'Lỗi', text: (response.message || response.error || 'Không xác định') });
+                            }
+                        })
+                        .fail(function() {
+                            Swal.fire({title: 'Lỗi kết nối server'});
+                        })
+                        .always(function() {
+                            $btn.prop('disabled', false).text(oldText);
+                        });
+                    });
+                    
+                    // Select all checkbox
+                    $('#select-all').change(function() {
+                        $('.loan-checkbox').prop('checked', this.checked);
+                        updateSelectedCount();
+                    });
+                    $(document).on('change', '.loan-checkbox', updateSelectedCount);
+                    $('#status-filter').on('change', applyStatusFilter);
+                    table.on('draw', updateSelectedCount);
+                    applyStatusFilter();
+                    
+                    // Batch disburse
+                    $('#batch-disburse-btn').click(function() {
+                        var selectedLoans = $('.loan-checkbox:checked').map(function() {
+                            return $(this).data('loan-id');
+                        }).get();
+                        
+                        if (selectedLoans.length === 0) {
+                            alert('Vui lòng chọn ít nhất một khoản vay');
+                            return;
+                        }
+                        
+                        Swal.fire({
+                            title: 'Giải ngân ' + selectedLoans.length + ' khoản vay?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Xác nhận',
+                            cancelButtonText: 'Hủy'
+                        }).then(function(result){
+                            if (result.isConfirmed) {
+                                processLoans(selectedLoans, 'disburse');
+                            }
+                        });
+                    });
+                    
+                    // Batch cancel
+                    $('#batch-cancel-btn').click(function() {
+                        var selectedLoans = $('.loan-checkbox:checked').map(function() {
+                            return $(this).data('loan-id');
+                        }).get();
+                        
+                        if (selectedLoans.length === 0) {
+                            alert('Vui lòng chọn ít nhất một khoản vay');
+                            return;
+                        }
+                        
+                        Swal.fire({
+                            title: 'Nhập lý do hủy bỏ',
+                            input: 'text',
+                            inputPlaceholder: 'Lý do',
+                            showCancelButton: true,
+                            confirmButtonText: 'Xác nhận',
+                            cancelButtonText: 'Đóng'
+                        }).then(function(result){
+                            if (result.isConfirmed &amp;&amp; result.value) {
+                                processLoans(selectedLoans, 'reject', result.value);
+                            }
+                        });
+                    });
+                    
+                    // Individual actions
+                    $('.disburse-btn').click(function() {
+                        var loanId = $(this).data('loan-id');
+                        Swal.fire({
+                            title: 'Giải ngân khoản vay này?',
+                            showCancelButton: true,
+                            confirmButtonText: 'Xác nhận',
+                            cancelButtonText: 'Hủy'
+                        }).then(function(result){ if (result.isConfirmed) { processLoans([loanId], 'disburse'); } });
+                    });
+                    
+                    $('.cancel-btn').click(function() {
+                        var loanId = $(this).data('loan-id');
+                        Swal.fire({
+                            title: 'Nhập lý do hủy bỏ',
+                            input: 'text',
+                            inputPlaceholder: 'Lý do',
+                            showCancelButton: true,
+                            confirmButtonText: 'Xác nhận',
+                            cancelButtonText: 'Đóng'
+                        }).then(function(result){ if (result.isConfirmed &amp;&amp; result.value) { processLoans([loanId], 'cancel', result.value); } });
+                    });
+                    
+                    function processLoans(loanIds, action, reason) {
+                        $.post('/loan-disbursement/process', {
+                            action: action,
+                            loan_ids: loanIds,
+                            reason: reason || ''
+                        })
+                        .done(function(response) {
+                            if (response.success) {
+                                Swal.fire({toast: true, position: 'top-end', timer: 2000, showConfirmButton: false, title: 'Xử lý thành công' });
+                                location.reload();
+                            } else {
+                                Swal.fire({title: 'Lỗi', text: (response.message || response.error || 'Không xác định') });
+                            }
+                        })
+                        .fail(function() {
+                            Swal.fire({title: 'Lỗi kết nối server'});
+                        });
+                    }
+                });
+            </script>
+        </t>
+    </template>
+    
+    <template id="error_template" name="Error Template">
+        <t t-call="web.layout">
+            <t t-call-assets="web.assets_frontend" t-js="false"/>
+            <t t-call-assets="web.assets_frontend" t-css="false"/>
+            <t t-set="title">Lỗi</t>
+            <div class="container">
+                <div class="alert alert-danger">
+                    <h4>Đã xảy ra lỗi</h4>
+                    <p><t t-esc="error"/></p>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,190 @@
+/* Dashboard Stats Styles */
+.o_field_dashboard_stats {
+    margin-bottom: 20px;
+    min-height: 150px;
+    display: block;
+    position: relative;
+    /* Ensure the field wrapper itself stretches to the full column width */
+    width: 100%;
+}
+
+.p2p-stats-container {
+    border: 1px solid #e7e7e7;
+    padding: 16px 16px 10px 16px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    /* Make the stats container occupy full width of its parent column */
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-height: 150px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    transition: box-shadow .2s ease, transform .2s ease;
+    margin: 0; /* no centering needed when full width */
+    box-sizing: border-box;
+}
+
+.p2p-stats-container:hover {
+    box-shadow: 0 10px 26px rgba(0,0,0,0.10);
+    transform: translateY(-1px);
+}
+
+.p2p-stats-title {
+    margin: 0 0 12px 0;
+    color: #1f2937;
+    font-size: 17px;
+    font-weight: 600;
+    padding-bottom: 8px;
+    position: relative;
+}
+
+.p2p-stats-title:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 56px;
+    height: 3px;
+    background: linear-gradient(90deg, #4e79a7, #7aa6d1);
+    border-radius: 2px;
+}
+
+/* Data table styles */
+.p2p-stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.p2p-stats-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    text-align: center !important;
+    padding: 10px;
+    border-bottom: 2px solid #ddd;
+}
+
+.p2p-stats-table td {
+    padding: 8px 10px;
+    text-align: right;
+    border-top: 1px solid #ddd;
+}
+
+.p2p-stats-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+}
+
+.p2p-stats-table tfoot tr {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.p2p-stats-table tfoot td {
+    border-top: 2px solid #ddd;
+}
+
+/* Empty state styling */
+.p2p-stats-empty {
+    text-align: center;
+    padding: 26px;
+    color: #6b7280;
+    font-style: italic;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px dashed #e5e7eb;
+}
+
+.p2p-stats-empty i {
+    margin-bottom: 10px;
+    opacity: 0.5;
+}
+
+/* Loading state styling */
+.p2p-stats-loading {
+    text-align: center;
+    padding: 26px;
+    color: #2563eb;
+    background-color: rgba(37, 99, 235, 0.06);
+    border-radius: 8px;
+    border: 1px dashed rgba(37, 99, 235, 0.35);
+}
+
+.p2p-stats-loading .fa-spinner {
+    color: #4a90e2;
+}
+
+/* Error state styling */
+.p2p-stats-error {
+    text-align: center;
+    padding: 26px;
+    color: #dc2626;
+    background-color: rgba(220, 38, 38, 0.06);
+    border-radius: 8px;
+    border: 1px dashed rgba(220, 38, 38, 0.35);
+}
+
+.p2p-stats-error .fa-exclamation-triangle {
+    color: #e74c3c;
+}
+
+/* Debug info styling */
+.p2p-stats-debug {
+    background-color: #f5f5f5;
+    border-radius: 3px;
+    font-family: monospace;
+    padding: 8px !important;
+    margin-top: 10px;
+}
+
+/* Zebra striping for better readability */
+.p2p-stats-table tbody tr.bg-light {
+    background-color: #f9f9f9;
+}
+
+.p2p-stats-table tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .p2p-stats-table {
+        font-size: 0.9rem;
+    }
+    
+    .p2p-stats-table th,
+    .p2p-stats-table td {
+        padding: 6px 8px;
+    }
+    /* On small screens make stat containers full width for usability */
+    .p2p-stats-container {
+        width: 100% !important;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* When the widget is embedded as a field in Odoo views, make it fill the host column */
+.o_field_widget.o_field_p2p_dashboard_graph {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+}
+.o_field_p2p_dashboard_graph .p2p-stats-container,
+.o_field_widget.o_readonly_modifier.o_field_p2p_dashboard_graph .p2p-stats-container {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Ensure the chart wrapper and canvas always fill the container */
+.o_field_p2p_dashboard_graph .p2p-chart-wrapper,
+.o_field_widget.o_readonly_modifier.o_field_p2p_dashboard_graph .p2p-chart-wrapper {
+    width: 100% !important;
+}
+.o_field_p2p_dashboard_graph canvas,
+.o_field_widget.o_readonly_modifier.o_field_p2p_dashboard_graph canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}

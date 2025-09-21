@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_p2p_sync_wizard_form" model="ir.ui.view">
+        <field name="name">p2p.sync.wizard.form</field>
+        <field name="model">p2p.sync.wizard</field>
+        <field name="arch" type="xml">
+            <form string="P2P Sync Wizard">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>P2P MongoDB Sync Tool</h1>
+                    </div>
+                    <group>
+                        <p>Tool này giúp bạn:</p>
+                        <ul>
+                            <li>Test kết nối MongoDB</li>
+                            <li>Đồng bộ dữ liệu wallet và loan</li>
+                            <li>Xem thống kê database</li>
+                        </ul>
+                    </group>
+                    <group>
+                        <button name="test_mongodb_connection" 
+                                string="Test MongoDB Connection" 
+                                type="object" 
+                                class="btn-primary"/>
+                        <button name="fix_database_columns" 
+                                string="Fix Database Columns" 
+                                type="object" 
+                                class="btn-warning"/>
+                        <button name="debug_loan_data" 
+                                string="Debug Loan Data" 
+                                type="object" 
+                                class="btn-info"/>
+                        <button name="clean_old_data" 
+                                string="Clean Old Data" 
+                                type="object" 
+                                class="btn-danger"/>
+                        <button name="sync_all_data" 
+                                string="Sync All Data" 
+                                type="object" 
+                                class="btn-success"/>
+                    </group>
+                    <group>
+                        <button name="open_wallets" 
+                                string="View Wallets" 
+                                type="object" 
+                                class="btn-info"/>
+                        <button name="open_loans" 
+                                string="View Loans" 
+                                type="object" 
+                                class="btn-info"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_p2p_sync_wizard" model="ir.actions.act_window">
+        <field name="name">P2P Sync Tool</field>
+        <field name="res_model">p2p.sync.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Item cho Sync Tool -->
+    <data noupdate="0">
+        <menuitem id="menu_p2p_sync_tool" 
+                  name="Sync Tool" 
+                  parent="menu_p2p_bridge_root" 
+                  action="action_p2p_sync_wizard" 
+                  sequence="30"/>
+    </data>
+</odoo>

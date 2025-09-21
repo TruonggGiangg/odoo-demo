@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="wallets_live_template" name="Wallets Live">
+        <t t-call="web.layout">
+            <div class="container mt-4">
+                <h2>P2P Wallets (Mongo Live)</h2>
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Balance</th>
+                            <th>Currency</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="wallets" t-as="w">
+                            <tr>
+                                <td><t t-esc="w.get('user_id')"/></td>
+                                <td><t t-esc="w.get('balance')"/></td>
+                                <td><t t-esc="w.get('currency', 'VND')"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="loans_live_template" name="Loans Live">
+        <t t-call="web.layout">
+            <div class="container mt-4">
+                <h2>P2P Loans (Mongo Live)</h2>
+                <table class="table table-striped mt-3">
+                    <thead>
+                        <tr>
+                            <th>Loan ID</th>
+                            <th>Borrower</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="loans" t-as="l">
+                            <tr>
+                                <td><t t-esc="str(l.get('_id'))"/></td>
+                                <td><t t-esc="l.get('borrower_id')"/></td>
+                                <td><t t-esc="l.get('amount')"/></td>
+                                <td><t t-esc="l.get('status')"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="error_template" name="Bridge Error">
+        <t t-call="web.layout">
+            <div class="container mt-4">
+                <div class="alert alert-danger"><t t-esc="error"/></div>
+            </div>
+        </t>
+    </template>
+</odoo>
+
+

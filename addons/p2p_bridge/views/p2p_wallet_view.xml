@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View cho Wallet -->
+    <record id="view_p2p_wallet_list" model="ir.ui.view">
+        <field name="name">p2p.wallet.list</field>
+        <field name="model">p2p.wallet</field>
+        <field name="arch" type="xml">
+            <list string="P2P Wallets">
+                <field name="user_id"/>
+                <field name="wallet_balance"/>
+                <field name="currency"/>
+                <field name="last_updated"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View cho Wallet -->
+    <record id="view_p2p_wallet_form" model="ir.ui.view">
+        <field name="name">p2p.wallet.form</field>
+        <field name="model">p2p.wallet</field>
+        <field name="arch" type="xml">
+            <form string="P2P Wallet">
+                <sheet>
+                    <group>
+                        <field name="user_id"/>
+                        <field name="wallet_balance"/>
+                        <field name="currency"/>
+                        <field name="last_updated"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View cho Loans -->
+    <record id="view_p2p_loan_list" model="ir.ui.view">
+        <field name="name">p2p.loan.list</field>
+        <field name="model">p2p.loan</field>
+        <field name="arch" type="xml">
+            <list string="P2P Loans" default_order="created_at desc">
+                <field name="contractId" string="Contract ID"/>
+                <field name="borrower_id" string="Borrower"/>
+                <field name="capital" string="Capital"/>
+                <field name="interest_rate" string="Rate %"/>
+                <field name="term_months" string="Term"/>
+                <field name="status" string="Status"/>
+                <field name="willing" string="Willing"/>
+                <field name="total_notes" string="Total Notes"/>
+                <field name="invested_notes" string="Invested"/>
+                <field name="created_at" string="Created"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View cho Loans -->
+    <record id="view_p2p_loan_form" model="ir.ui.view">
+        <field name="name">p2p.loan.form</field>
+        <field name="model">p2p.loan</field>
+        <field name="arch" type="xml">
+            <form string="P2P Loan">
+                <sheet>
+                    <group>
+                        <field name="contractId"/>
+                        <field name="borrower_id"/>
+                        <field name="capital"/>
+                        <field name="interest_rate"/>
+                        <field name="term_months"/>
+                        <field name="status"/>
+                        <field name="willing"/>
+                        <field name="maturity_date"/>
+                        <field name="created_date"/>
+                        <field name="monthly_principal_pay"/>
+                        <field name="monthly_interest_pay"/>
+                        <field name="monthly_pay"/>
+                        <field name="entirely_pay"/>
+                        <field name="total_notes"/>
+                        <field name="invested_notes"/>
+                        <field name="created_at"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action cho Wallet -->
+    <record id="action_p2p_wallet" model="ir.actions.act_window">
+        <field name="name">P2P Wallets</field>
+        <field name="res_model">p2p.wallet</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có wallet nào được đồng bộ từ MongoDB
+            </p>
+        </field>
+    </record>
+
+    <!-- Action cho Loans -->
+    <record id="action_p2p_loan" model="ir.actions.act_window">
+        <field name="name">P2P Loans</field>
+        <field name="res_model">p2p.loan</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Chưa có khoản vay nào được đồng bộ từ MongoDB
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <data noupdate="0">
+        <!-- Gắn Bridge vào menu gốc của loan_disbursement -->
+        <menuitem id="menu_p2p_bridge_root" 
+                  name="Bridge"
+                  sequence="90"
+                  groups="base.group_user"/>
+
+        <menuitem id="menu_p2p_wallet" 
+                  name="Wallets" 
+                  parent="menu_p2p_bridge_root" 
+                  action="action_p2p_wallet" 
+                  sequence="10"
+                  groups="base.group_user"/>
+
+        <menuitem id="menu_p2p_loan" 
+                  name="Loans" 
+                  parent="menu_p2p_bridge_root" 
+                  action="action_p2p_loan" 
+                  sequence="20"
+                  groups="base.group_user"/>
+
+        <!-- Links tới live Mongo views -->
+        <record id="ir_actions_act_url_wallets_live" model="ir.actions.act_url">
+            <field name="name">Wallets Live</field>
+            <field name="type">ir.actions.act_url</field>
+            <field name="url">/bridge/wallets</field>
+            <field name="target">self</field>
+        </record>
+
+        <record id="ir_actions_act_url_loans_live" model="ir.actions.act_url">
+            <field name="name">Loans Live</field>
+            <field name="type">ir.actions.act_url</field>
+            <field name="url">/bridge/loans</field>
+            <field name="target">self</field>
+        </record>
+
+        <menuitem id="menu_p2p_wallets_live"
+                  name="Wallets (Live)"
+                  parent="menu_p2p_bridge_root"
+                  action="ir_actions_act_url_wallets_live"
+                  sequence="30"
+                  groups="base.group_user"/>
+
+        <menuitem id="menu_p2p_loans_live"
+                  name="Loans (Live)"
+                  parent="menu_p2p_bridge_root"
+                  action="ir_actions_act_url_loans_live"
+                  sequence="40"
+                  groups="base.group_user"/>
+
+        <record id="ir_actions_act_url_custom" model="ir.actions.act_url">
+            <field name="name">Custom P2P Interface</field>
+            <field name="url">/p2p</field>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>

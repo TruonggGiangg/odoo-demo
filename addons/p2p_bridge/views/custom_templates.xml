@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Custom Dashboard Template -->
+    <template id="custom_dashboard" name="P2P Custom Dashboard">
+        <t t-call="web.layout">
+            <t t-set="title">P2P Lending Dashboard</t>
+            <div class="container-fluid">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="text-center text-primary mb-4">
+                            <i class="fa fa-chart-line"></i> P2P Lending Dashboard
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <i class="fa fa-wallet fa-2x mb-2"></i>
+                                <h4><t t-esc="total_wallets"/></h4>
+                                <p class="mb-0">Total Wallets</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <i class="fa fa-money-bill-wave fa-2x mb-2"></i>
+                                <h4><t t-esc="total_loans"/></h4>
+                                <p class="mb-0">Total Loans</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <i class="fa fa-users fa-2x mb-2"></i>
+                                <h4><t t-esc="total_borrowers"/></h4>
+                                <p class="mb-0">Borrowers</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <i class="fa fa-chart-pie fa-2x mb-2"></i>
+                                <h4><t t-esc="total_investors"/></h4>
+                                <p class="mb-0">Investors</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="/p2p/dashboard">Dashboard</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/borrowers">Borrowers</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/investors">Investors</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/loans">Loans</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Recent Data Tables -->
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa fa-users"></i> Recent Borrowers</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Status</th>
+                                                <th>KYC</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="borrowers" t-as="borrower">
+                                                <tr>
+                                                    <td><t t-esc="borrower.name"/></td>
+                                                    <td><t t-esc="borrower.email"/></td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{borrower.status == 'verified' and 'success' or 'warning'}">
+                                                            <t t-esc="borrower.status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{borrower.kyc_status == 'completed' and 'success' or 'warning'}">
+                                                            <t t-esc="borrower.kyc_status"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa fa-money-bill-wave"></i> Recent Loans</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Contract ID</th>
+                                                <th>Capital</th>
+                                                <th>Rate</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="loans" t-as="loan">
+                                                <tr>
+                                                    <td><t t-esc="loan.contractId"/></td>
+                                                    <td><t t-esc="loan.capital"/></td>
+                                                    <td><t t-esc="loan.interest_rate"/>%</td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{loan.status == 'success' and 'success' or 'warning'}">
+                                                            <t t-esc="loan.status"/>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom CSS -->
+            <style>
+                .card {
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: none;
+                    border-radius: 10px;
+                }
+                .card-body {
+                    padding: 1.5rem;
+                }
+                .badge {
+                    font-size: 0.8em;
+                }
+                .navbar-brand {
+                    font-weight: bold;
+                }
+                .table th {
+                    background-color: #f8f9fa;
+                    border-top: none;
+                }
+                .btn-custom {
+                    border-radius: 20px;
+                    padding: 8px 20px;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Custom Borrowers Template -->
+    <template id="custom_borrowers" name="P2P Custom Borrowers">
+        <t t-call="web.layout">
+            <t t-set="title">P2P Borrowers Management</t>
+            <div class="container-fluid">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="text-center text-primary mb-4">
+                            <i class="fa fa-users"></i> Borrowers Management
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="/p2p/dashboard">Dashboard</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" href="/p2p/borrowers">Borrowers</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/investors">Investors</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/loans">Loans</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Borrowers Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="fa fa-users"></i> All Borrowers</h5>
+                                <button class="btn btn-primary btn-custom" onclick="addBorrower()">
+                                    <i class="fa fa-plus"></i> Add Borrower
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>National ID</th>
+                                                <th>Status</th>
+                                                <th>KYC Status</th>
+                                                <th>Active</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="borrowers" t-as="borrower">
+                                                <tr>
+                                                    <td><t t-esc="borrower.name"/></td>
+                                                    <td><t t-esc="borrower.email"/></td>
+                                                    <td><t t-esc="borrower.phone"/></td>
+                                                    <td><t t-esc="borrower.national_id"/></td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{borrower.status == 'verified' and 'success' or borrower.status == 'rejected' and 'danger' or 'warning'}">
+                                                            <t t-esc="borrower.status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{borrower.kyc_status == 'completed' and 'success' or borrower.kyc_status == 'rejected' and 'danger' or 'warning'}">
+                                                            <t t-esc="borrower.kyc_status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{borrower.is_active and 'success' or 'danger'}">
+                                                            <t t-esc="borrower.is_active and 'Yes' or 'No'"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button t-attf-class="btn btn-sm #{borrower.is_active and 'btn-warning' or 'btn-success'}" 
+                                                                    t-attf-onclick="toggleBorrower(#{borrower.id}, #{borrower.is_active})">
+                                                                <i t-attf-class="fa fa-#{borrower.is_active and 'pause' or 'play'}"></i>
+                                                                <t t-esc="borrower.is_active and 'Deactivate' or 'Activate'"/>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-info" t-attf-onclick="viewBorrower(#{borrower.id})">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom JavaScript -->
+            <script>
+                function toggleBorrower(borrowerId, isActive) {
+                    const action = isActive ? 'deactivate' : 'activate';
+                    const url = `/p2p/api/borrower/${borrowerId}/${action}`;
+                    
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred');
+                    });
+                }
+
+                function viewBorrower(borrowerId) {
+                    // Implement view borrower functionality
+                    alert('View borrower: ' + borrowerId);
+                }
+
+                function addBorrower() {
+                    // Implement add borrower functionality
+                    alert('Add new borrower');
+                }
+            </script>
+
+            <!-- Custom CSS -->
+            <style>
+                .card {
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: none;
+                    border-radius: 10px;
+                }
+                .card-body {
+                    padding: 1.5rem;
+                }
+                .badge {
+                    font-size: 0.8em;
+                }
+                .navbar-brand {
+                    font-weight: bold;
+                }
+                .table th {
+                    background-color: #f8f9fa;
+                    border-top: none;
+                }
+                .btn-custom {
+                    border-radius: 20px;
+                    padding: 8px 20px;
+                }
+                .btn-group .btn {
+                    margin-right: 5px;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Custom Investors Template -->
+    <template id="custom_investors" name="P2P Custom Investors">
+        <t t-call="web.layout">
+            <t t-set="title">P2P Investors Management</t>
+            <div class="container-fluid">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="text-center text-primary mb-4">
+                            <i class="fa fa-chart-pie"></i> Investors Management
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="/p2p/dashboard">Dashboard</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/borrowers">Borrowers</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link active" href="/p2p/investors">Investors</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/loans">Loans</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Investors Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5><i class="fa fa-chart-pie"></i> All Investors</h5>
+                                <button class="btn btn-primary btn-custom" onclick="addInvestor()">
+                                    <i class="fa fa-plus"></i> Add Investor
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>National ID</th>
+                                                <th>Status</th>
+                                                <th>KYC Status</th>
+                                                <th>Active</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="investors" t-as="investor">
+                                                <tr>
+                                                    <td><t t-esc="investor.name"/></td>
+                                                    <td><t t-esc="investor.email"/></td>
+                                                    <td><t t-esc="investor.phone"/></td>
+                                                    <td><t t-esc="investor.national_id"/></td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{investor.status == 'verified' and 'success' or investor.status == 'rejected' and 'danger' or 'warning'}">
+                                                            <t t-esc="investor.status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{investor.kyc_status == 'completed' and 'success' or investor.kyc_status == 'rejected' and 'danger' or 'warning'}">
+                                                            <t t-esc="investor.kyc_status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{investor.is_active and 'success' or 'danger'}">
+                                                            <t t-esc="investor.is_active and 'Yes' or 'No'"/>
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <div class="btn-group" role="group">
+                                                            <button t-attf-class="btn btn-sm #{investor.is_active and 'btn-warning' or 'btn-success'}" 
+                                                                    t-attf-onclick="toggleInvestor(#{investor.id}, #{investor.is_active})">
+                                                                <i t-attf-class="fa fa-#{investor.is_active and 'pause' or 'play'}"></i>
+                                                                <t t-esc="investor.is_active and 'Deactivate' or 'Activate'"/>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-info" t-attf-onclick="viewInvestor(#{investor.id})">
+                                                                <i class="fa fa-eye"></i> View
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom JavaScript -->
+            <script>
+                function toggleInvestor(investorId, isActive) {
+                    const action = isActive ? 'deactivate' : 'activate';
+                    const url = `/p2p/api/investor/${investorId}/${action}`;
+                    
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred');
+                    });
+                }
+
+                function viewInvestor(investorId) {
+                    // Implement view investor functionality
+                    alert('View investor: ' + investorId);
+                }
+
+                function addInvestor() {
+                    // Implement add investor functionality
+                    alert('Add new investor');
+                }
+            </script>
+
+            <!-- Custom CSS -->
+            <style>
+                .card {
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: none;
+                    border-radius: 10px;
+                }
+                .card-body {
+                    padding: 1.5rem;
+                }
+                .badge {
+                    font-size: 0.8em;
+                }
+                .navbar-brand {
+                    font-weight: bold;
+                }
+                .table th {
+                    background-color: #f8f9fa;
+                    border-top: none;
+                }
+                .btn-custom {
+                    border-radius: 20px;
+                    padding: 8px 20px;
+                }
+                .btn-group .btn {
+                    margin-right: 5px;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Custom Loans Template -->
+    <template id="custom_loans" name="P2P Custom Loans">
+        <t t-call="web.layout">
+            <t t-set="title">P2P Loans Management</t>
+            <div class="container-fluid">
+                <!-- Header -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h1 class="text-center text-primary mb-4">
+                            <i class="fa fa-money-bill-wave"></i> Loans Management
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="/p2p/dashboard">Dashboard</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse" id="navbarNav">
+                                    <ul class="navbar-nav">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/borrowers">Borrowers</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="/p2p/investors">Investors</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link active" href="/p2p/loans">Loans</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- Loans Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fa fa-money-bill-wave"></i> All Loans</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Contract ID</th>
+                                                <th>Borrower ID</th>
+                                                <th>Capital</th>
+                                                <th>Interest Rate</th>
+                                                <th>Term (Months)</th>
+                                                <th>Status</th>
+                                                <th>Willing</th>
+                                                <th>Created At</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="loans" t-as="loan">
+                                                <tr>
+                                                    <td><t t-esc="loan.contractId"/></td>
+                                                    <td><t t-esc="loan.borrower_id"/></td>
+                                                    <td><t t-esc="loan.capital"/></td>
+                                                    <td><t t-esc="loan.interest_rate"/>%</td>
+                                                    <td><t t-esc="loan.term_months"/></td>
+                                                    <td>
+                                                        <span t-attf-class="badge badge-#{loan.status == 'success' and 'success' or loan.status == 'fail' and 'danger' or 'warning'}">
+                                                            <t t-esc="loan.status"/>
+                                                        </span>
+                                                    </td>
+                                                    <td><t t-esc="loan.willing"/></td>
+                                                    <td><t t-esc="loan.created_at"/></td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom CSS -->
+            <style>
+                .card {
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    border: none;
+                    border-radius: 10px;
+                }
+                .card-body {
+                    padding: 1.5rem;
+                }
+                .badge {
+                    font-size: 0.8em;
+                }
+                .navbar-brand {
+                    font-weight: bold;
+                }
+                .table th {
+                    background-color: #f8f9fa;
+                    border-top: none;
+                }
+                .btn-custom {
+                    border-radius: 20px;
+                    padding: 8px 20px;
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- Error Page Template -->
+    <template id="error_page" name="Error Page">
+        <t t-call="web.layout">
+            <t t-set="title">Error</t>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h1 class="text-danger">Error</h1>
+                        <p t-esc="error"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

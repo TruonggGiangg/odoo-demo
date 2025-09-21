@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_loan_disbursement_user,loan.disbursement.user,model_loan_disbursement,base.group_user,1,1,1,0
+access_loan_disbursement_manager,loan.disbursement.manager,model_loan_disbursement,base.group_system,1,1,1,1
+access_loan_application_user,loan.application.user,model_loan_application,base.group_user,1,1,1,0
+access_loan_application_manager,loan.application.manager,model_loan_application,base.group_system,1,1,1,1

@@ -1,0 +1,8 @@
+<!-- 000.xml - Có thể dùng cho dynamic content hoặc template phụ -->
+<templates>
+    <t t-name="website_custom_snippet.s_custom_snippet_content">
+        <div>
+            <h3>Nội dung động hoặc phụ cho snippet</h3>
+        </div>
+    </t>
+</templates>

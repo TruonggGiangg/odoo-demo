@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Investor List View -->
+    <record id="view_p2p_investor_list" model="ir.ui.view">
+        <field name="name">p2p.investor.list</field>
+        <field name="model">p2p.investor</field>
+        <field name="arch" type="xml">
+            <list string="P2P Investors" default_order="created_date desc">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="national_id"/>
+                <field name="status"/>
+                <field name="kyc_status"/>
+                <field name="is_active"/>
+                <field name="created_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Investor Form View -->
+    <record id="view_p2p_investor_form" model="ir.ui.view">
+        <field name="name">p2p.investor.form</field>
+        <field name="model">p2p.investor</field>
+        <field name="arch" type="xml">
+            <form string="P2P Investor">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" 
+                            class="btn-primary" invisible="is_active"/>
+                    <button name="action_deactivate" string="Deactivate" type="object" 
+                            class="btn-secondary" invisible="not is_active"/>
+                    <button name="action_verify_kyc" string="Verify KYC" type="object" 
+                            class="btn-success" invisible="kyc_status == 'completed'"/>
+                    <button name="action_reject_kyc" string="Reject KYC" type="object" 
+                            class="btn-danger" invisible="kyc_status == 'rejected'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="pending,verified"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Investor Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="national_id"/>
+                            <field name="date_of_birth"/>
+                        </group>
+                        <group>
+                            <field name="is_active"/>
+                            <field name="status"/>
+                            <field name="kyc_status"/>
+                            <field name="kyc_verification_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="address"/>
+                    </group>
+                    <notebook>
+                        <page string="Financial Information">
+                            <group>
+                                <group>
+                                    <field name="investment_capacity"/>
+                                    <field name="risk_tolerance"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="KYC Documents">
+                            <field name="kyc_documents" readonly="1"/>
+                            <group>
+                                <field name="kyc_notes"/>
+                            </group>
+                        </page>
+                        <!-- <page string="Investments">
+                            <field name="investments">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="amount"/>
+                                    <field name="status"/>
+                                    <field name="created_date"/>
+                                </tree>
+                            </field>
+                        </page> -->
+                        <page string="Audit">
+                            <group>
+                                <group>
+                                    <field name="created_by"/>
+                                    <field name="created_date"/>
+                                </group>
+                                <group>
+                                    <field name="last_updated"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Investor Search View -->
+    <record id="view_p2p_investor_search" model="ir.ui.view">
+        <field name="name">p2p.investor.search</field>
+        <field name="model">p2p.investor</field>
+        <field name="arch" type="xml">
+            <search string="Search Investors">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="national_id"/>
+                <filter string="Active" name="active" domain="[('is_active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('is_active', '=', False)]"/>
+                <filter string="Verified" name="verified" domain="[('status', '=', 'verified')]"/>
+                <filter string="Pending" name="pending" domain="[('status', '=', 'pending')]"/>
+                <filter string="KYC Completed" name="kyc_completed" domain="[('kyc_status', '=', 'completed')]"/>
+                <filter string="KYC Pending" name="kyc_pending" domain="[('kyc_status', '=', 'in_progress')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="KYC Status" name="group_kyc" context="{'group_by': 'kyc_status'}"/>
+                    <filter string="Risk Tolerance" name="group_risk" context="{'group_by': 'risk_tolerance'}"/>
+                    <filter string="Created Date" name="group_created" context="{'group_by': 'created_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Investor Action -->
+    <record id="action_p2p_investor" model="ir.actions.act_window">
+        <field name="name">P2P Investors</field>
+        <field name="res_model">p2p.investor</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_p2p_investor_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first investor!
+            </p>
+            <p>
+                Investors are customers who invest money in loans through the P2P platform.
+            </p>
+        </field>
+    </record>
+
+    
+</odoo>

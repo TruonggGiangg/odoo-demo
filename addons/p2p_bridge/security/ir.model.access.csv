@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+p2p_bridge_access_p2p_wallet_user,access_p2p_wallet_user,p2p_bridge.model_p2p_wallet,base.group_user,1,0,0,0
+p2p_bridge_access_p2p_loan_user,access_p2p_loan_user,p2p_bridge.model_p2p_loan,base.group_user,1,0,0,0
+p2p_bridge_access_p2p_bridge_user,access_p2p_bridge_user,p2p_bridge.model_p2p_bridge,base.group_user,1,0,0,0
+p2p_bridge_access_p2p_sync_wizard_user,access_p2p_sync_wizard_user,p2p_bridge.model_p2p_sync_wizard,base.group_user,1,0,0,0
+p2p_bridge_access_p2p_borrower_user,access_p2p_borrower_user,p2p_bridge.model_p2p_borrower,base.group_user,1,0,0,0
+p2p_bridge_access_p2p_investor_user,access_p2p_investor_user,p2p_bridge.model_p2p_investor,base.group_user,1,0,0,0
+p2p_bridge_access_p2p_kyc_document_user,access_p2p_kyc_document_user,p2p_bridge.model_p2p_kyc_document,base.group_user,1,0,0,0
+
+p2p_bridge_access_p2p_wallet_admin,access_p2p_wallet_admin,p2p_bridge.model_p2p_wallet,base.group_system,1,1,1,1
+p2p_bridge_access_p2p_loan_admin,access_p2p_loan_admin,p2p_bridge.model_p2p_loan,base.group_system,1,1,1,1
+p2p_bridge_access_p2p_bridge_admin,access_p2p_bridge_admin,p2p_bridge.model_p2p_bridge,base.group_system,1,1,1,1
+p2p_bridge_access_p2p_sync_wizard_admin,access_p2p_sync_wizard_admin,p2p_bridge.model_p2p_sync_wizard,base.group_system,1,1,1,1
+p2p_bridge_access_p2p_borrower_admin,access_p2p_borrower_admin,p2p_bridge.model_p2p_borrower,base.group_system,1,1,1,1
+p2p_bridge_access_p2p_investor_admin,access_p2p_investor_admin,p2p_bridge.model_p2p_investor,base.group_system,1,1,1,1
+p2p_bridge_access_p2p_kyc_document_admin,access_p2p_kyc_document_admin,p2p_bridge.model_p2p_kyc_document,base.group_system,1,1,1,1
+

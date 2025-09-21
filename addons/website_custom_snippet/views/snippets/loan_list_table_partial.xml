@@ -1,0 +1,33 @@
+<odoo>
+    <template id="loan_list_table_partial">
+        <t t-if="loans">
+            <table class="table table-bordered table-striped loan-table-styled">
+                <thead>
+                    <tr>
+                        <th>Mã khoản vay</th>
+                        <th>Người vay</th>
+                        <th>Số tiền</th>
+                        <th>Lãi suất (%/năm)</th>
+                        <th>Kỳ hạn (tháng)</th>
+                        <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="loans" t-as="loan">
+                        <tr>
+                            <td><t t-esc="loan.contractId or loan.loan_id or f'Loan-{loan.id}'"/></td>
+                            <td><t t-esc="loan.borrower_id"/></td>
+                            <td><t t-esc="loan.capital"/> VND</td>
+                            <td><t t-esc="loan.interest_rate"/></td>
+                            <td><t t-esc="loan.term_months"/></td>
+                            <td><t t-esc="loan.created_date"/></td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </t>
+        <t t-if="not loans">
+            <div class="alert alert-info text-center">Chưa có khoản vay nào.</div>
+        </t>
+    </template>
+</odoo>

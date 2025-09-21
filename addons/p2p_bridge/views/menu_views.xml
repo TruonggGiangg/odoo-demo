@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_p2p_bridge_root" 
+              name="P2P" 
+              sequence="10"/>
+
+    <!-- Slim Menus -->
+    <menuitem id="menu_p2p_wallet" 
+              name="Wallets" 
+              parent="menu_p2p_bridge_root" 
+              action="action_p2p_wallet" 
+              sequence="10"/>
+
+    <menuitem id="menu_p2p_loan" 
+              name="Loans" 
+              parent="menu_p2p_bridge_root" 
+              action="action_p2p_loan" 
+              sequence="20"/>
+
+    <menuitem id="menu_p2p_borrower" 
+              name="Borrowers" 
+              parent="menu_p2p_bridge_root" 
+              action="action_p2p_borrower" 
+              sequence="30"/>
+
+    <menuitem id="menu_p2p_investor" 
+              name="Lenders" 
+              parent="menu_p2p_bridge_root" 
+              action="action_p2p_investor" 
+              sequence="40"/>
+</odoo>

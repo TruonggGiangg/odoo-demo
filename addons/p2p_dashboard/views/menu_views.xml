@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu for P2P Dashboard -->
+    <menuitem id="menu_p2p_dashboard_root"
+              name="P2P Dashboard"
+              web_icon="p2p_dashboard,static/description/icon.png"
+              sequence="90"/>
+
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_p2p_dashboard"
+              name="Bảng điều khiển"
+              parent="menu_p2p_dashboard_root"
+              action="p2p_dashboard.action_p2p_dashboard"
+              sequence="10"/>
+</odoo>

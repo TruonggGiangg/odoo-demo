@@ -1,0 +1,215 @@
+<odoo>
+    <template id="loan_list_template" name="Danh sách khoản vay">
+        <section class="s_loan_list" data-name="Loan List" data-snippet="s_loan_list">
+            <div class="container">
+                <h2>Danh sách khoản vay</h2>
+                <t t-set="loans" t-value="request.env['p2p.loan'].search([], limit=10)"/>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="loan-list-wrapper">
+                            <div class="loan-list-header" id="loan-list-header"></div>
+                            <div class="loan-list-body-wrapper" id="loan-list-body-wrapper">
+                                <div id="loan-list-table-container" class="loan-list-container">
+                                    <!-- Table body will be loaded here by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <style>
+                .loan-list-wrapper {
+                    position: relative;
+                    max-height: 360px;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 10px;
+                    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+                    background: #fff;
+                }
+                .loan-list-header {
+                    overflow: hidden;
+                    border-bottom: 1px solid #e2e8f0;
+                }
+                .loan-list-body-wrapper {
+                    overflow: hidden; /* we control scrolling via scrollTop */
+                    max-height: calc(360px - 48px); /* header approx height; adjusted dynamically later */
+                }
+                .loan-list-container {
+                    will-change: transform;
+                }
+                .loan-list-fade-enter {
+                    opacity: 0;
+                }
+                .loan-list-fade-enter-active {
+                    transition: opacity .35s ease;
+                    opacity: 1;
+                }
+                .loan-table-styled thead th {
+                    background: linear-gradient(180deg,#f8fafc,#f1f5f9);
+                    border-bottom: 2px solid #e2e8f0;
+                    color: #334155;
+                    font-weight: 600;
+                }
+                .loan-table-styled tbody tr:nth-child(odd) { background-color: #fafafa; }
+                .loan-table-styled tbody tr:hover { background-color: #f1f5f9; }
+                .loan-table-styled td, .loan-table-styled th { padding: 10px 12px; }
+                </style>
+                <script type="text/javascript"><![CDATA[
+                (function() {
+                    var autoScrollTimer = null;
+                    var scrollSpeed = 0.5; // px per frame
+                    var bodyWrapper = null;
+
+                    function stopAutoScroll() {
+                        if (autoScrollTimer) {
+                            cancelAnimationFrame(autoScrollTimer);
+                            autoScrollTimer = null;
+                        }
+                    }
+
+                    function startAutoScroll() {
+                        stopAutoScroll();
+                        bodyWrapper = document.getElementById('loan-list-body-wrapper');
+                        if (!bodyWrapper) return;
+                        // Ensure body has enough content to scroll smoothly
+                        ensureScrollable();
+                        function step() {
+                            var max = Math.max(0, bodyWrapper.scrollHeight - bodyWrapper.clientHeight);
+                            var next = bodyWrapper.scrollTop + scrollSpeed;
+                            if (next >= max) next = 0; // loop seamlessly
+                            bodyWrapper.scrollTop = next;
+                            autoScrollTimer = requestAnimationFrame(step);
+                        }
+                        autoScrollTimer = requestAnimationFrame(step);
+                    }
+
+                    function applyEnterAnimation() {
+                        var el = document.getElementById('loan-list-table-container');
+                        if (!el) return;
+                        el.classList.remove('loan-list-fade-enter','loan-list-fade-enter-active');
+                        void el.offsetWidth; // reflow to restart animation
+                        el.classList.add('loan-list-fade-enter');
+                        requestAnimationFrame(function(){
+                            el.classList.add('loan-list-fade-enter-active');
+                        });
+                    }
+
+                    function splitTableIntoHeaderAndBody() {
+                        var headerHost = document.getElementById('loan-list-header');
+                        var bodyHost = document.getElementById('loan-list-table-container');
+                        if (!headerHost || !bodyHost) return;
+                        var tmp = document.createElement('div');
+                        tmp.innerHTML = bodyHost.innerHTML;
+                        var table = tmp.querySelector('table');
+                        if (!table) return;
+                        var thead = table.querySelector('thead');
+                        var tbody = table.querySelector('tbody');
+                        var cls = table.getAttribute('class') || '';
+
+                        // Build header table
+                        var headerHTML = '';
+                        if (thead) {
+                            headerHTML = '<table class="'+cls+'" style="table-layout:fixed; width:100%">'+thead.outerHTML+'</table>';
+                        }
+                        // Build body table
+                        var bodyHTML = '';
+                        if (tbody) {
+                            bodyHTML = '<table class="'+cls+'" style="table-layout:fixed; width:100%">'+tbody.outerHTML+'</table>';
+                        }
+                        headerHost.innerHTML = headerHTML;
+                        bodyHost.innerHTML = bodyHTML || bodyHost.innerHTML;
+                    }
+
+                    function alignColumns() {
+                        var headerTable = document.querySelector('#loan-list-header table');
+                        var bodyTable = document.querySelector('#loan-list-table-container table');
+                        if (!headerTable || !bodyTable) return;
+                        var headerCells = headerTable.querySelectorAll('thead th');
+                        var firstBodyRow = bodyTable.querySelector('tbody tr');
+                        if (!firstBodyRow) return;
+                        var bodyCells = firstBodyRow.querySelectorAll('td');
+                        if (headerCells.length !== bodyCells.length) return;
+                        // Reset widths to auto to get natural sizes
+                        headerCells.forEach(function(th){ th.style.width = 'auto'; });
+                        bodyCells.forEach(function(td){ td.style.width = 'auto'; });
+                        // Measure header widths
+                        var widths = Array.from(headerCells).map(function(th){ return th.getBoundingClientRect().width; });
+                        // Apply to both header and body cells
+                        widths.forEach(function(w, i){
+                            var px = Math.max(40, Math.floor(w)) + 'px';
+                            headerCells[i].style.width = px;
+                        });
+                        // Apply widths to each row's tds
+                        bodyTable.querySelectorAll('tbody tr').forEach(function(tr){
+                            Array.from(tr.children).forEach(function(td, i){ td.style.width = widths[i] + 'px'; });
+                        });
+                    }
+
+                    function ensureScrollable() {
+                        var bodyHost = document.getElementById('loan-list-table-container');
+                        var wrapper = document.getElementById('loan-list-body-wrapper');
+                        var table = bodyHost ? bodyHost.querySelector('table') : null;
+                        if (!bodyHost || !wrapper || !table) return;
+                        var tbody = table.querySelector('tbody');
+                        if (!tbody) return;
+                        // Build a repeat based on original content so we don't grow indefinitely between refreshes
+                        var originalHTML = tbody.getAttribute('data-original-html');
+                        if (!originalHTML) {
+                            originalHTML = tbody.innerHTML;
+                            tbody.setAttribute('data-original-html', originalHTML);
+                        }
+                        // Fill to at least ~2x wrapper height for smoother loop
+                        tbody.innerHTML = originalHTML; // reset to original
+                        // Temporarily inject to measure
+                        var minHeight = wrapper.clientHeight * 2;
+                        var repeat = 1;
+                        // Limit repeat to avoid heavy DOM
+                        while (table.scrollHeight < minHeight && repeat < 6) {
+                            tbody.innerHTML += originalHTML;
+                            repeat += 1;
+                        }
+                    }
+
+                    function postProcessTable() {
+                        // After any refresh, split table and align columns
+                        splitTableIntoHeaderAndBody();
+                        // Allow layout to settle
+                        setTimeout(function(){ alignColumns(); startAutoScroll(); }, 0);
+                    }
+
+                    function loadLoanTable() {
+                        var wrapper = document.getElementById('loan-list-body-wrapper');
+                        var prevTop = wrapper ? wrapper.scrollTop : 0;
+                        var prevMax = wrapper ? Math.max(0, wrapper.scrollHeight - wrapper.clientHeight) : 0;
+                        var prevRatio = prevMax > 0 ? (prevTop / prevMax) : 0;
+                        fetch('/loan_list/realtime', {cache: 'no-store'})
+                            .then(function(resp) { return resp.text(); })
+                            .then(function(html) {
+                                var bodyHost = document.getElementById('loan-list-table-container');
+                                if (!bodyHost) return;
+                                bodyHost.innerHTML = html;
+                                // Add styling class if missing
+                                var tbl = bodyHost.querySelector('table');
+                                if (tbl && !tbl.classList.contains('loan-table-styled')) {
+                                    tbl.classList.add('loan-table-styled');
+                                }
+                                applyEnterAnimation();
+                                postProcessTable();
+                                // Restore scroll position proportionally to avoid jump
+                                var newMax = wrapper ? Math.max(0, wrapper.scrollHeight - wrapper.clientHeight) : 0;
+                                if (wrapper && newMax > 0) {
+                                    wrapper.scrollTop = Math.min(newMax, Math.floor(prevRatio * newMax));
+                                }
+                            })
+                            .catch(function(){ /* ignore */ });
+                    }
+
+                    // Initial load and refresh cycle
+                    loadLoanTable();
+                    setInterval(loadLoanTable, 20000);
+                    window.addEventListener('resize', function(){ setTimeout(function(){ alignColumns(); }, 50); });
+                })();
+                ]]></script>
+            </div>
+        </section>
+    </template>
+</odoo>

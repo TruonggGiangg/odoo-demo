@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Loan Configuration -->
+        <record id="default_loan_config" model="loan.config">
+            <field name="name">Cấu hình mặc định</field>
+            <field name="active" eval="True"/>
+            <field name="is_active" eval="True"/>
+            <field name="min_loan_amount" eval="1000000"/>
+            <field name="max_loan_amount" eval="1000000000"/>
+            <field name="base_interest_rate" eval="12.0"/>
+            <field name="max_interest_rate" eval="36.0"/>
+            <field name="service_fee_rate" eval="5.0"/>
+            <field name="late_fee_rate" eval="2.0"/>
+            <field name="processing_fee" eval="50000"/>
+            <field name="server_enabled" eval="True"/>
+            <field name="server_api_url">http://host.docker.internal:3000</field>
+            <field name="server_sync_interval" eval="30"/>
+            
+            <field name="email_notifications" eval="True"/>
+            <field name="sms_notifications" eval="False"/>
+            <field name="auto_approval_limit" eval="5000000"/>
+            <field name="max_concurrent_loans" eval="3"/>
+            <field name="factor_constant" eval="1.0"/>
+            <field name="risk_factor" eval="1.2"/>
+            <field name="credit_score_factor" eval="0.8"/>
+            <field name="loan_term_factor" eval="1.1"/>
+            <field name="collateral_factor" eval="0.9"/>
+            <field name="early_repayment_discount" eval="2.0"/>
+            <field name="late_payment_penalty" eval="5.0"/>
+        </record>
+    </data>
+</odoo>

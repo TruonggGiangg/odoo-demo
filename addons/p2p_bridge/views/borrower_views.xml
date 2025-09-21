@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- KYC Document Views -->
+    <record id="view_p2p_kyc_document_list" model="ir.ui.view">
+        <field name="name">p2p.kyc.document.list</field>
+        <field name="model">p2p.kyc.document</field>
+        <field name="arch" type="xml">
+            <list string="KYC Documents">
+                <field name="name"/>
+                <field name="document_type"/>
+                <field name="verification_status"/>
+                <field name="verified_by"/>
+                <field name="verified_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_p2p_kyc_document_form" model="ir.ui.view">
+        <field name="name">p2p.kyc.document.form</field>
+        <field name="model">p2p.kyc.document</field>
+        <field name="arch" type="xml">
+            <form string="KYC Document">
+                <group>
+                    <field name="name"/>
+                    <field name="document_type"/>
+                    <field name="document_file" filename="document_filename"/>
+                    <field name="document_filename"/>
+                    <field name="verification_status"/>
+                    <field name="verification_notes"/>
+                    <field name="verified_by"/>
+                    <field name="verified_date"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Borrower Loans Action -->
+    <record id="action_p2p_borrower_loans" model="ir.actions.act_window">
+        <field name="name">Borrower Loans</field>
+        <field name="res_model">p2p.loan</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('borrower_id', '=', active_id)]</field>
+        <field name="context">{'default_borrower_id': active_id}</field>
+    </record>
+
+    <!-- Borrower List View -->
+    <record id="view_p2p_borrower_list" model="ir.ui.view">
+        <field name="name">p2p.borrower.list</field>
+        <field name="model">p2p.borrower</field>
+        <field name="arch" type="xml">
+            <list string="P2P Borrowers" default_order="created_date desc">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="national_id"/>
+                <field name="status"/>
+                <field name="kyc_status"/>
+                <field name="is_active"/>
+                <field name="loan_count"/>
+                <field name="created_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Borrower Form View -->
+    <record id="view_p2p_borrower_form" model="ir.ui.view">
+        <field name="name">p2p.borrower.form</field>
+        <field name="model">p2p.borrower</field>
+        <field name="arch" type="xml">
+            <form string="P2P Borrower">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" 
+                            class="btn-primary" invisible="is_active"/>
+                    <button name="action_deactivate" string="Deactivate" type="object" 
+                            class="btn-secondary" invisible="not is_active"/>
+                    <button name="action_verify_kyc" string="Verify KYC" type="object" 
+                            class="btn-success" invisible="kyc_status == 'completed'"/>
+                    <button name="action_reject_kyc" string="Reject KYC" type="object" 
+                            class="btn-danger" invisible="kyc_status == 'rejected'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="pending,verified"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_p2p_borrower_loans)d" type="action" 
+                                class="oe_stat_button" icon="fa-money">
+                            <field name="loan_count" widget="statinfo" string="Loans"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Borrower Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="national_id"/>
+                            <field name="date_of_birth"/>
+                        </group>
+                        <group>
+                            <field name="is_active"/>
+                            <field name="status"/>
+                            <field name="kyc_status"/>
+                            <field name="kyc_verification_date"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="address"/>
+                    </group>
+                    <notebook>
+                        <page string="Financial Information">
+                            <group>
+                                <group>
+                                    <field name="credit_score"/>
+                                    <field name="monthly_income"/>
+                                </group>
+                                <group>
+                                    <field name="employment_status"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="KYC Documents">
+                            <field name="kyc_documents" readonly="1"/>
+                            <group>
+                                <field name="kyc_notes"/>
+                            </group>
+                        </page>
+                        <page string="Loans">
+                            <field name="loans">
+                                <list>
+                                    <field name="contractId"/>
+                                    <field name="capital"/>
+                                    <field name="interest_rate"/>
+                                    <field name="term_months"/>
+                                    <field name="status"/>
+                                    <field name="created_at"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Audit">
+                            <group>
+                                <group>
+                                    <field name="created_by"/>
+                                    <field name="created_date"/>
+                                </group>
+                                <group>
+                                    <field name="last_updated"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Borrower Search View -->
+    <record id="view_p2p_borrower_search" model="ir.ui.view">
+        <field name="name">p2p.borrower.search</field>
+        <field name="model">p2p.borrower</field>
+        <field name="arch" type="xml">
+            <search string="Search Borrowers">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="national_id"/>
+                <filter string="Active" name="active" domain="[('is_active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('is_active', '=', False)]"/>
+                <filter string="Verified" name="verified" domain="[('status', '=', 'verified')]"/>
+                <filter string="Pending" name="pending" domain="[('status', '=', 'pending')]"/>
+                <filter string="KYC Completed" name="kyc_completed" domain="[('kyc_status', '=', 'completed')]"/>
+                <filter string="KYC Pending" name="kyc_pending" domain="[('kyc_status', '=', 'in_progress')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="KYC Status" name="group_kyc" context="{'group_by': 'kyc_status'}"/>
+                    <filter string="Employment Status" name="group_employment" context="{'group_by': 'employment_status'}"/>
+                    <filter string="Created Date" name="group_created" context="{'group_by': 'created_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Borrower Action -->
+    <record id="action_p2p_borrower" model="ir.actions.act_window">
+        <field name="name">P2P Borrowers</field>
+        <field name="res_model">p2p.borrower</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_p2p_borrower_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first borrower!
+            </p>
+            <p>
+                Borrowers are customers who request loans through the P2P platform.
+            </p>
+        </field>
+    </record>
+
+</odoo>

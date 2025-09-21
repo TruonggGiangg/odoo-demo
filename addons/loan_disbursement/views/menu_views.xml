@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_loan_root" 
+              name="Loan Disbursement" 
+              sequence="10"/>
+
+    <!-- Loan Management Menu -->
+    <menuitem id="menu_loan_management" 
+              name="Quản lý khoản vay" 
+              parent="menu_loan_root" 
+              sequence="10"/>
+
+    <!-- Loan Applications Menu -->
+    <menuitem id="menu_loan_application" 
+              name="Đơn vay" 
+              parent="menu_loan_management" 
+              action="action_loan_application" 
+              sequence="10"/>
+
+    <!-- Loan Disbursements Menu -->
+    <menuitem id="menu_loan_disbursement" 
+              name="Giải ngân" 
+              parent="menu_loan_management" 
+              action="action_loan_disbursement" 
+              sequence="20"/>
+
+    <!-- Dashboard Menu -->
+    <!-- Action mở dashboard web -->
+    <record id="action_loan_disbursement_dashboard" model="ir.actions.act_url">
+        <field name="name">Loan Disbursement Dashboard</field>
+        <field name="type">ir.actions.act_url</field>
+        <field name="url">/loan/disbursement/web</field>
+        <field name="target">self</field>
+    </record>
+
+    <menuitem id="menu_loan_dashboard" 
+              name="Dashboard" 
+              parent="menu_loan_root" 
+              action="action_loan_disbursement_dashboard"
+              sequence="20"/>
+</odoo>

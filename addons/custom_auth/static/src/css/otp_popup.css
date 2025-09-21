@@ -1,0 +1,210 @@
+/* OTP Popup Styles */
+#otp-popup {
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+#otp-popup .bg-white {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* OTP Input Styles */
+.otp-input {
+    transition: all 0.2s ease;
+}
+
+.otp-input:focus {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.otp-input:valid {
+    border-color: #10b981;
+    background-color: #f0fdf4;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+    margin-top: 0.5rem;
+}
+
+.password-strength-bar {
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.password-strength-fill {
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.password-strength-fill.weak {
+    background-color: #ef4444;
+    width: 25%;
+}
+
+.password-strength-fill.fair {
+    background-color: #f59e0b;
+    width: 50%;
+}
+
+.password-strength-fill.good {
+    background-color: #10b981;
+    width: 75%;
+}
+
+.password-strength-fill.strong {
+    background-color: #059669;
+    width: 100%;
+}
+
+.password-strength-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.password-strength-text.weak {
+    color: #ef4444;
+}
+
+.password-strength-text.fair {
+    color: #f59e0b;
+}
+
+.password-strength-text.good {
+    color: #10b981;
+}
+
+.password-strength-text.strong {
+    color: #059669;
+}
+
+/* Password Match Indicator */
+.password-match {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.password-match.valid {
+    color: #10b981;
+}
+
+.password-match.invalid {
+    color: #ef4444;
+}
+
+/* Error and Success Messages */
+.error-message {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.success-message {
+    color: #10b981;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Form Error */
+.form-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Loading States */
+#otp-loading {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Button States */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    #otp-popup .bg-white {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    .otp-input {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* Accessibility */
+.otp-input:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+button:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .otp-input {
+        border-width: 3px;
+    }
+    
+    button {
+        border-width: 2px;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    #otp-popup,
+    #otp-popup .bg-white,
+    .otp-input,
+    .password-strength-fill {
+        animation: none;
+        transition: none;
+    }
+} 
